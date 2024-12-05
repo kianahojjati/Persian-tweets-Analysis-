@@ -24,3 +24,57 @@ print("Data saved to 'persian_tweets.csv'")
 print(data['label'].value_counts())
 print(y_train.value_counts())
 print(y_test.value_counts())
+
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.naive_bayes import MultinomialNB
+from sklearn.metrics import classification_report, accuracy_score
+from hazm import Normalizer, word_tokenize, stopwords_list
+
+# Load the dataset
+data = pd.read_csv("persian_tweets.csv")
+
+# Preprocess the tweets
+normalizer = Normalizer()
+stopwords = set(stopwords_list())
+
+def preprocess_text(text):
+    text = normalizer.normalize(text)  # Normalize text
+    tokens = word_tokenize(text)      # Tokenize
+    tokens = [word for word in tokens if word not in stopwords]  # Remove stopwords
+    return " ".join(tokens)
+
+# Apply preprocessing
+data['cleaned_tweet'] = data['tweet'].apply(preprocess_text)
+
+# Split data into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(
+    data['cleaned_tweet'], data['label'], test_size=0.2, random_state=42
+)
+
+# Convert text to feature vectors
+vectorizer = CountVectorizer()
+X_train_vectors = vectorizer.fit_transform(X_train)
+X_test_vectors = vectorizer.transform(X_test)
+
+# Train the model
+model = MultinomialNB()
+model.fit(X_train_vectors, y_train)
+
+# Predict on the test set
+y_pred = model.predict(X_test_vectors)
+
+# Evaluate the model
+print("Classification Report:")
+print(classification_report(y_test, y_pred))
+print(f"Accuracy: {accuracy_score(y_test, y_pred) * 100:.2f}%")
+print("Predicted Classes:", set(y_pred))
+print("Actual Classes:", set(y_test))
+
+import matplotlib.pyplot as plt
+
+# Bar chart for sentiment distribution
+plt.bar(["Positive", "Negative"], [sum(y_pred), len(y_pred) - sum(y_pred)])
+plt.title("Sentiment Distribution")
+plt.show()
