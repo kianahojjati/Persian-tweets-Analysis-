@@ -1,0 +1,26 @@
+import pandas as pd
+
+# Sample Persian tweets and their sentiment labels
+data = {
+    "tweet": [
+        "این خیلی خوب است",  # Positive
+        "افتضاح بود",        # Negative
+        "واقعا از این تجربه راضی بودم",  # Positive
+        "بدترین چیزی که تا حالا دیدم",  # Negative
+        "عالیه، من خیلی خوشحالم",       # Positive
+        "اصلا ارزشش رو نداشت",         # Negative
+        "خیلی خوب و جذاب بود",         # Positive
+        "هیچ وقت دوباره امتحان نمیکنم",  # Negative
+        "من عاشق این شدم",             # Positive
+        "افتضاح ترین چیزی که خریدم",   # Negative
+    ],
+    "label": [1, 0, 1, 0, 1, 0, 1, 0, 1, 0]
+}
+
+# Convert dictionary to DataFrame
+data = pd.DataFrame(data)
+df.to_csv("persian_tweets.csv", index=False, encoding="utf-8")
+print("Data saved to 'persian_tweets.csv'")
+print(data['label'].value_counts())
+print(y_train.value_counts())
+print(y_test.value_counts())
